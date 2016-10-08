@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-plugin-v1-xml">
+  <info>
+    <name>teamcity-browser-notify</name>
+    <display-name>Teamcity browser notify</display-name>
+    <version>@Version@</version>
+    <description>Notification for browser using web notifications API.</description>
+    <download-url>Plugin download URL</download-url>
+    <email>systray@yandex.ru</email>
+    <vendor>
+      <name>Grigory Chernyshev</name>
+      <url>https://github.com/grundic</url>
+      <logo>Plugin vendor logo URL</logo>
+    </vendor>
+  </info>
+  <deployment use-separate-classloader="true" />
+</teamcity-plugin>

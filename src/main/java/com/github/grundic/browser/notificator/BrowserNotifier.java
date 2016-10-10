@@ -50,11 +50,11 @@ import java.util.Set;
  * Date: 09/10/16
  * Time: 00:05
  */
-public class BrowserNotificator implements Notificator {
-    public static final String PLUGIN_TYPE = "browserNotificator";
-    public static final String PLUGIN_NAME = "Browser Notificator";
+public class BrowserNotifier implements Notificator {
+    public static final String PLUGIN_TYPE = "browserNotifier";
+    public static final String PLUGIN_NAME = "Browser Notifier";
 
-    public BrowserNotificator(
+    public BrowserNotifier(
             @NotNull NotificatorRegistry notificatorRegistry
     ) {
         notificatorRegistry.register(this);

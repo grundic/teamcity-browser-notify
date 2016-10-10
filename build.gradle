@@ -16,6 +16,7 @@ group = 'com.github.grundic'
 version = '0.0.1'
 
 repositories {
+    mavenCentral()
     maven {
         url "http://repository.jetbrains.com/all"
     }
@@ -23,7 +24,7 @@ repositories {
 }
 
 ext {
-    teamcityVersion = '10.0.2'
+    teamcityVersion = System.properties['teamcity.version'] ?: '10.0.2'
     teamcityDir = "${System.properties['user.home']}/.teamcity.d"
     java8Home = project.hasProperty('java8.home') ? property('java8.home') : '/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home'
     serverOpts = "-DTC.res.disableAll=true " +
@@ -37,6 +38,9 @@ test {
 }
 
 dependencies {
+    compile 'org.jetbrains.teamcity:server-api:10.0.2'
+    provided 'org.atmosphere:atmosphere-runtime:2.2.7'
+    runtime 'com.google.code.gson:gson:2.4'
 }
 
 teamcity {

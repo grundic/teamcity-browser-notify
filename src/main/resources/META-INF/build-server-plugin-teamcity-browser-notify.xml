@@ -4,4 +4,7 @@
     <bean class="com.github.grundic.browser.notificator.BrowserNotifier"></bean>
     <bean class="com.github.grundic.browser.notificator.NotificatorSettingsPageExtension"></bean>
     <bean class="com.github.grundic.browser.notificator.ClientEventListenerProvider"></bean>
+    <bean class="com.github.grundic.browser.notificator.AtmosphereController"></bean>
+    <bean class="com.github.grundic.browser.notificator.BrowserNotificationHandler"></bean>
+    <bean class="com.github.grundic.browser.notificator.MessageBean"></bean>
 </beans>

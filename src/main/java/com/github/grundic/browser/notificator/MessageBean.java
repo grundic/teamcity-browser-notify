@@ -24,28 +24,31 @@
 
 package com.github.grundic.browser.notificator;
 
-import jetbrains.buildServer.web.openapi.PagePlaces;
-import jetbrains.buildServer.web.openapi.PlaceId;
-import jetbrains.buildServer.web.openapi.PluginDescriptor;
-import jetbrains.buildServer.web.openapi.SimplePageExtension;
-import org.jetbrains.annotations.NotNull;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * User: g.chernyshev
  * Date: 09/10/16
- * Time: 17:19
+ * Time: 16:10
  */
-public class ClientEventListenerProvider extends SimplePageExtension {
-    public ClientEventListenerProvider(@NotNull PagePlaces pagePlaces, @NotNull PluginDescriptor descriptor) {
-        super(
-                pagePlaces,
-                PlaceId.ALL_PAGES_HEADER,
-                BrowserNotifier.PLUGIN_TYPE,
-                descriptor.getPluginResourcesPath("com/github/grundic/browser/notificator/jsp/empty.jsp")
-        );
+public class MessageBean {
+    public String title;
+    public String body;
+    public String tag;
+    public String icon;
 
-        addJsFile(descriptor.getPluginResourcesPath("com/github/grundic/browser/notificator/js/notify.js"));
-        addJsFile(descriptor.getPluginResourcesPath("com/github/grundic/browser/notificator/js/listener.js"));
-        register();
+    public void md5Tag(){
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            String hash = this.title + this.body;
+            md.update(hash.getBytes());
+            byte[] enc = md.digest();
+
+            this.tag = new sun.misc.BASE64Encoder().encode(enc);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            this.tag = this.title + this.body;
+        }
     }
 }

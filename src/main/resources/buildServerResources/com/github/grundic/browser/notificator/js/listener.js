@@ -24,5 +24,43 @@
 
 'use strict';
 
+(function () {
+    var eventListener = {
+        init: function () {
+            var socket = atmosphere;
+            var transport = 'websocket';
 
-console.log("This message would appear on every page!");
+            var request = {
+                url: document.location.origin + '/browserNotifier/notify.html',
+                contentType: 'application/json',
+                trackMessageLength: true,
+                shared: true,
+                transport: transport,
+                fallbackTransport: 'long-polling'
+            };
+
+            this.initRequest(request);
+
+            socket.subscribe(request);
+        },
+
+        initRequest: function (request) {
+            request.onTransportFailure = function (errorMsg) {
+                var notifier = window.Notify.default;
+                var notification = new notifier("Transport Failure", errorMsg);
+                notification.show();
+            };
+
+            request.onMessage = function (response) {
+                var responseObject = JSON.parse(response.responseBody);
+                var notifier = window.Notify.default;
+
+                responseObject.icon = window.location.protocol + "//" + window.location.host + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/teamcity_logo.png";
+                var notification = new notifier(responseObject.title, responseObject);
+                notification.show();
+            };
+        }
+    };
+
+    eventListener.init();
+})();

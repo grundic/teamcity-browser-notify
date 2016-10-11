@@ -40,7 +40,7 @@ test {
 dependencies {
     compile 'org.jetbrains.teamcity:server-api:10.0.2'
     provided 'org.atmosphere:atmosphere-runtime:2.2.7'
-    runtime 'com.google.code.gson:gson:2.4'
+    provided 'com.google.code.gson:gson:2.4'
 }
 
 teamcity {

@@ -3,4 +3,5 @@
 <beans default-autowire="constructor">
     <bean class="com.github.grundic.browser.notificator.BrowserNotifier"></bean>
     <bean class="com.github.grundic.browser.notificator.NotificatorSettingsPageExtension"></bean>
+    <bean class="com.github.grundic.browser.notificator.ClientEventListenerProvider"></bean>
 </beans>

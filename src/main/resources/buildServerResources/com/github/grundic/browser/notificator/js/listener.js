@@ -55,8 +55,19 @@
                 var responseObject = JSON.parse(response.responseBody);
                 var notifier = window.Notify.default;
 
+                var extra = {
+                    notifyClick: function (){
+                        window.location.href = document.location.origin + responseObject.url;
+                    }
+                };
+
+                responseObject = $j.extend(responseObject, extra);
+
                 responseObject.icon = window.location.protocol + "//" + window.location.host + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/teamcity_logo.png";
-                var notification = new notifier(responseObject.title, responseObject);
+                var notification = new notifier(
+                    responseObject.title,
+                    responseObject
+                );
                 notification.show();
             };
         }

@@ -90,6 +90,7 @@ public class BrowserNotifier implements Notificator {
         message.title = status;
         message.body = String.format("%s [%s]", build.getFullName(), build.getBuildNumber());
         message.md5Tag();
+        message.url = String.format("/viewType.html?buildTypeId=%s", build.getBuildTypeExternalId());
 
         return message;
     }
@@ -99,6 +100,7 @@ public class BrowserNotifier implements Notificator {
         message.title = status;
         message.body = String.format("%s", buildType.getFullName());
         message.md5Tag();
+        message.url = String.format("/viewType.html?buildTypeId=%s", buildType.getExternalId());
 
         return message;
     }
@@ -108,6 +110,7 @@ public class BrowserNotifier implements Notificator {
         message.title = status;
         message.body = String.format("%s", project.getFullName());
         message.md5Tag();
+        message.url = String.format("/project.html?projectId=%s", project.getExternalId());
 
         return message;
     }
@@ -116,8 +119,9 @@ public class BrowserNotifier implements Notificator {
         MessageBean message = new MessageBean();
         message.title = status;
         SProject project = muteInfo.getProject();
-        message.body = String.format("%s", null == project ? "<unknown>" : project.getFullName());
+        message.body = (null == project) ? "<unknown>" : project.getFullName();
         message.md5Tag();
+        message.url = (null == project) ? "/" : String.format("/project.html?projectId=%s", project.getExternalId());
 
         return message;
     }

@@ -38,6 +38,7 @@ public class MessageBean {
     public String tag;
     public String icon;
     public int timeout;
+    public String url;
 
     public void md5Tag(){
         try {

@@ -31,6 +31,7 @@ import jetbrains.buildServer.web.util.SessionUser;
 import jetbrains.buildServer.web.util.WebUtil;
 import org.atmosphere.cpr.*;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,10 +45,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * User: g.chernyshev
  * Date: 09/10/16
  * Time: 15:07
- *
+ * <p>
  * Credits of implementation comes to `dtretyakov`
  * https://github.com/dtretyakov/teamcity-tray-notifier
- *
  */
 public class BrowserNotificationHandler extends AbstractReflectorAtmosphereHandler {
     private static final Logger LOG = Logger.getInstance(BrowserNotificationHandler.class.getName());
@@ -117,7 +117,7 @@ public class BrowserNotificationHandler extends AbstractReflectorAtmosphereHandl
         // Store connection
         AtmosphereResourceSessionFactory.getDefault().getSession(resource).setAttribute(USER_ID, currentUser.getId());
         Queue<AtmosphereResource> resources = myResources.get(currentUser.getId());
-        if (resources == null){
+        if (resources == null) {
             resources = new ConcurrentLinkedQueue<>();
             myResources.put(currentUser.getId(), resources);
         }
@@ -186,9 +186,11 @@ public class BrowserNotificationHandler extends AbstractReflectorAtmosphereHandl
         onOpen(resource);
     }
 
-    public void broadcast(MessageBean message, Set<SUser> users) {
-        final String jsonMessage = myGson.toJson(message);
+    public void broadcast(@NotNull MessageBean message, @NotNull Set<SUser> users) {
         for (SUser user : users) {
+            message.timeout = BrowserNotifier.getTimeout(user);
+            final String jsonMessage = myGson.toJson(message);
+
             final Queue<AtmosphereResource> resources = myResources.get(user.getId());
             if (resources == null) continue;
             for (AtmosphereResource resource : resources) {

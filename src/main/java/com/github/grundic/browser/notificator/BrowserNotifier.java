@@ -29,18 +29,17 @@ import jetbrains.buildServer.notification.Notificator;
 import jetbrains.buildServer.notification.NotificatorRegistry;
 import jetbrains.buildServer.responsibility.ResponsibilityEntry;
 import jetbrains.buildServer.responsibility.TestNameResponsibilityEntry;
-import jetbrains.buildServer.serverSide.SBuildType;
-import jetbrains.buildServer.serverSide.SProject;
-import jetbrains.buildServer.serverSide.SRunningBuild;
-import jetbrains.buildServer.serverSide.STest;
+import jetbrains.buildServer.serverSide.*;
 import jetbrains.buildServer.serverSide.mute.MuteInfo;
 import jetbrains.buildServer.serverSide.problems.BuildProblemInfo;
 import jetbrains.buildServer.tests.TestName;
+import jetbrains.buildServer.users.NotificatorPropertyKey;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.vcs.VcsRoot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -54,14 +53,36 @@ public class BrowserNotifier implements Notificator {
     public static final String PLUGIN_TYPE = "browserNotifier";
     public static final String PLUGIN_NAME = "Browser Notifier";
 
+    private static final String NOTIFICATION_TIMEOUT = "NOTIFICATION_TIMEOUT";
+    private static final int DEFAULT_TIMEOUT = 10;
+
     private final BrowserNotificationHandler notificationHandler;
 
     public BrowserNotifier(
             @NotNull NotificatorRegistry notificatorRegistry,
             @NotNull BrowserNotificationHandler notificationHandler
-            ) {
+    ) {
+        ArrayList<UserPropertyInfo> userProps = new ArrayList<>();
+        userProps.add(new UserPropertyInfo(NOTIFICATION_TIMEOUT, "Notification timeout."));
+
         this.notificationHandler = notificationHandler;
-        notificatorRegistry.register(this);
+        notificatorRegistry.register(this, userProps);
+    }
+
+    public static int getTimeout(SUser user) {
+        String timeout = user.getPropertyValue(new NotificatorPropertyKey(PLUGIN_TYPE, NOTIFICATION_TIMEOUT));
+        if (null == timeout || timeout.isEmpty()) {
+            timeout = Integer.toString(DEFAULT_TIMEOUT);
+        }
+
+        int timeoutNumber;
+        try {
+            timeoutNumber = Integer.parseInt(timeout);
+        } catch (NumberFormatException e) {
+            timeoutNumber = DEFAULT_TIMEOUT;
+        }
+
+        return timeoutNumber;
     }
 
     private MessageBean getMessage(@NotNull String status, @NotNull Build build) {

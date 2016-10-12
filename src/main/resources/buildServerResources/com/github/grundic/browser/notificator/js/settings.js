@@ -34,7 +34,7 @@ var BrowserNotifier = {
         $j("#notifications-info>span").html('Browser notifications are supported and enabled.');
 
         $j("#notification-request").hide();
-        $j("#notification-test").show();
+        $j("#notification-test").fadeIn("slow");
     },
 
     onPermissionDenied: function(){

@@ -22,10 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.github.grundic.browser.notificator;
+package com.github.grundic.browser.notificator.websocket;
 
+import com.github.grundic.browser.notificator.Constants;
+import com.github.grundic.browser.notificator.MessageBean;
 import com.google.gson.Gson;
 import com.intellij.openapi.diagnostic.Logger;
+import jetbrains.buildServer.users.NotificatorPropertyKey;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.web.util.SessionUser;
 import jetbrains.buildServer.web.util.WebUtil;
@@ -188,7 +191,7 @@ public class BrowserNotificationHandler extends AbstractReflectorAtmosphereHandl
 
     public void broadcast(@NotNull MessageBean message, @NotNull Set<SUser> users) {
         for (SUser user : users) {
-            message.timeout = BrowserNotifier.getTimeout(user);
+            message.timeout = getTimeout(user);
             final String jsonMessage = myGson.toJson(message);
 
             final Queue<AtmosphereResource> resources = myResources.get(user.getId());
@@ -197,5 +200,21 @@ public class BrowserNotificationHandler extends AbstractReflectorAtmosphereHandl
                 resource.getBroadcaster().broadcast(jsonMessage);
             }
         }
+    }
+
+    private static int getTimeout(SUser user) {
+        String timeout = user.getPropertyValue(new NotificatorPropertyKey(Constants.PLUGIN_TYPE, Constants.NOTIFICATION_TIMEOUT));
+        if (null == timeout || timeout.isEmpty()) {
+            timeout = Integer.toString(Constants.DEFAULT_TIMEOUT);
+        }
+
+        int timeoutNumber;
+        try {
+            timeoutNumber = Integer.parseInt(timeout);
+        } catch (NumberFormatException e) {
+            timeoutNumber = Constants.DEFAULT_TIMEOUT;
+        }
+
+        return timeoutNumber;
     }
 }

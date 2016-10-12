@@ -22,8 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.github.grundic.browser.notificator;
+package com.github.grundic.browser.notificator.notifier;
 
+import com.github.grundic.browser.notificator.Constants;
+import com.github.grundic.browser.notificator.MessageBean;
+import com.github.grundic.browser.notificator.websocket.BrowserNotificationHandler;
 import jetbrains.buildServer.Build;
 import jetbrains.buildServer.notification.Notificator;
 import jetbrains.buildServer.notification.NotificatorRegistry;
@@ -50,11 +53,6 @@ import java.util.Set;
  * Time: 00:05
  */
 public class BrowserNotifier implements Notificator {
-    public static final String PLUGIN_TYPE = "browserNotifier";
-    public static final String PLUGIN_NAME = "Browser Notifier";
-
-    private static final String NOTIFICATION_TIMEOUT = "NOTIFICATION_TIMEOUT";
-    private static final int DEFAULT_TIMEOUT = 10;
 
     private final BrowserNotificationHandler notificationHandler;
 
@@ -63,26 +61,10 @@ public class BrowserNotifier implements Notificator {
             @NotNull BrowserNotificationHandler notificationHandler
     ) {
         ArrayList<UserPropertyInfo> userProps = new ArrayList<>();
-        userProps.add(new UserPropertyInfo(NOTIFICATION_TIMEOUT, "Notification timeout."));
+        userProps.add(new UserPropertyInfo(Constants.NOTIFICATION_TIMEOUT, "Notification timeout."));
 
         this.notificationHandler = notificationHandler;
         notificatorRegistry.register(this, userProps);
-    }
-
-    public static int getTimeout(SUser user) {
-        String timeout = user.getPropertyValue(new NotificatorPropertyKey(PLUGIN_TYPE, NOTIFICATION_TIMEOUT));
-        if (null == timeout || timeout.isEmpty()) {
-            timeout = Integer.toString(DEFAULT_TIMEOUT);
-        }
-
-        int timeoutNumber;
-        try {
-            timeoutNumber = Integer.parseInt(timeout);
-        } catch (NumberFormatException e) {
-            timeoutNumber = DEFAULT_TIMEOUT;
-        }
-
-        return timeoutNumber;
     }
 
     private MessageBean getMessage(@NotNull String status, @NotNull Build build) {
@@ -129,13 +111,13 @@ public class BrowserNotifier implements Notificator {
     @NotNull
     @Override
     public String getNotificatorType() {
-        return PLUGIN_TYPE;
+        return Constants.PLUGIN_TYPE;
     }
 
     @NotNull
     @Override
     public String getDisplayName() {
-        return PLUGIN_NAME;
+        return Constants.PLUGIN_NAME;
     }
 
     @Override

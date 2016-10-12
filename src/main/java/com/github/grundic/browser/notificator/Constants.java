@@ -24,33 +24,14 @@
 
 package com.github.grundic.browser.notificator;
 
-import jetbrains.buildServer.web.openapi.PlaceId;
-import jetbrains.buildServer.web.openapi.PluginDescriptor;
-import jetbrains.buildServer.web.openapi.SimplePageExtension;
-import jetbrains.buildServer.web.openapi.WebControllerManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * User: g.chernyshev
- * Date: 09/10/16
- * Time: 22:45
+ * Date: 12/10/16
+ * Time: 23:43
  */
-public class NotificatorSettingsPageExtension extends SimplePageExtension {
-    public NotificatorSettingsPageExtension(@NotNull WebControllerManager web,
-                                            @NotNull PluginDescriptor pluginDescriptor) {
-        super(web);
-
-        setPluginName(BrowserNotifier.PLUGIN_TYPE);
-        setIncludeUrl(pluginDescriptor.getPluginResourcesPath("com/github/grundic/browser/notificator/jsp/settings.jsp"));
-        setPlaceId(PlaceId.NOTIFIER_SETTINGS_FRAGMENT);
-        register();
-    }
-
-    public boolean isAvailable(@NotNull HttpServletRequest request) {
-        // Only show this when displaying our notificator settings
-        String notificatorParam = request.getParameter("notificatorType");
-        return notificatorParam != null && notificatorParam.equals(BrowserNotifier.PLUGIN_TYPE);
-    }
+public class Constants {
+    public static final String PLUGIN_TYPE = "browserNotifier";
+    public static final String PLUGIN_NAME = "Browser Notifier";
+    public static final String NOTIFICATION_TIMEOUT = "NOTIFICATION_TIMEOUT";
+    public static final int DEFAULT_TIMEOUT = 10;
 }

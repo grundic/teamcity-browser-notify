@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.github.grundic.browser.notificator;
+package com.github.grundic.browser.notificator.web;
 
+import com.github.grundic.browser.notificator.Constants;
 import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PlaceId;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
@@ -40,7 +41,7 @@ public class ClientEventListenerProvider extends SimplePageExtension {
         super(
                 pagePlaces,
                 PlaceId.ALL_PAGES_HEADER,
-                BrowserNotifier.PLUGIN_TYPE,
+                Constants.PLUGIN_TYPE,
                 descriptor.getPluginResourcesPath("com/github/grundic/browser/notificator/jsp/empty.jsp")
         );
 

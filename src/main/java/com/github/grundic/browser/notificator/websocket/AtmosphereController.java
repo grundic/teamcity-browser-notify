@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.github.grundic.browser.notificator;
+package com.github.grundic.browser.notificator.websocket;
 
+import com.github.grundic.browser.notificator.Constants;
 import jetbrains.buildServer.controllers.BaseController;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
@@ -61,7 +62,7 @@ public class AtmosphereController extends BaseController {
             @NotNull WebControllerManager webControllerManager
     ) {
         super(server);
-        webPath = String.format("/%s/notify.html", BrowserNotifier.PLUGIN_TYPE);
+        webPath = String.format("/%s/notify.html", Constants.PLUGIN_TYPE);
         atmosphereFramework = createAtmosphereFramework(browserNotificationHandler);
         webControllerManager.registerController(webPath, this);
     }

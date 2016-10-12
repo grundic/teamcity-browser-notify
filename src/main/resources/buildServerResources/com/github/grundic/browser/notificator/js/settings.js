@@ -66,7 +66,7 @@ var BrowserNotifier = {
         var testNotification = new this.notify('Test notification', {
             body: $j('#notification-text').val(),
             icon: window.location.protocol + "//" + window.location.host + BrowserNotifier.basePath + "/img/teamcity_logo.png",
-            timeout: 5
+            timeout: $("properties[NOTIFICATION_TIMEOUT].value").value
         });
 
         testNotification.show();

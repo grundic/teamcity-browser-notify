@@ -31,7 +31,7 @@
             var transport = 'websocket';
 
             var request = {
-                url: document.location.origin + '/browserNotifier/notify.html',
+                url: base_uri + '/browserNotifier/notify.html',
                 contentType: 'application/json',
                 trackMessageLength: true,
                 shared: true,
@@ -63,7 +63,7 @@
 
                 responseObject = $j.extend(responseObject, extra);
 
-                responseObject.icon = window.location.protocol + "//" + window.location.host + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/teamcity_logo.png";
+                responseObject.icon = base_uri + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/teamcity_logo.png";
                 var notification = new notifier(
                     responseObject.title,
                     responseObject

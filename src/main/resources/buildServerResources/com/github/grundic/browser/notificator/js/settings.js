@@ -30,7 +30,7 @@ var BrowserNotifier = {
     basePath: "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator",
 
     onPermissionGranted: function(){
-        $j("#notifications-info>img").attr('src', BrowserNotifier.basePath + "/img/permission_granted.png");
+        $j("#notifications-info>img").attr('src', base_uri + BrowserNotifier.basePath + "/img/permission_granted.png");
         $j("#notifications-info>span").html('Browser notifications are supported and enabled.');
 
         $j("#notification-request").hide();
@@ -38,7 +38,7 @@ var BrowserNotifier = {
     },
 
     onPermissionDenied: function(){
-        $j("#notifications-info>img").attr('src', BrowserNotifier.basePath + "/img/permission_denied.png");
+        $j("#notifications-info>img").attr('src', base_uri + BrowserNotifier.basePath + "/img/permission_denied.png");
         $j("#notifications-info>span").html('Access to browser notifications is denied. Please, accept request from browser in order to get notified.');
 
         $j("#notification-test").hide();
@@ -46,7 +46,7 @@ var BrowserNotifier = {
     },
 
     onNotSupported: function(){
-        $j("#notifications-info>img").attr('src', BrowserNotifier.basePath + "/img/permission_denied.png");
+        $j("#notifications-info>img").attr('src', base_uri + BrowserNotifier.basePath + "/img/permission_denied.png");
         $j("#notifications-info>span").html('Unfortunately, browser notification is not supported on your browser.');
     },
 
@@ -65,7 +65,7 @@ var BrowserNotifier = {
     showTestNotification: function () {
         var testNotification = new this.notify('Test notification', {
             body: $j('#notification-text').val(),
-            icon: window.location.protocol + "//" + window.location.host + BrowserNotifier.basePath + "/img/teamcity_logo.png",
+            icon: base_uri + BrowserNotifier.basePath + "/img/teamcity_logo.png",
             timeout: $("properties[NOTIFICATION_TIMEOUT].value").value
         });
 

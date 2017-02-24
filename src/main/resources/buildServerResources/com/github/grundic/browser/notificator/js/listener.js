@@ -57,7 +57,7 @@
 
                 var extra = {
                     notifyClick: function (){
-                        window.location.href = document.location.origin + responseObject.url;
+                        window.location.href = base_uri + responseObject.url;
                     }
                 };
 

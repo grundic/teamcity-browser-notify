@@ -37,3 +37,4 @@ License
 -------
 [MIT](https://github.com/grundic/teamcity-browser-notify/blob/master/LICENSE)
 
+Icons made by Freepik, Madebyoliver from www.flaticon.com.

@@ -36,7 +36,6 @@ import jetbrains.buildServer.serverSide.*;
 import jetbrains.buildServer.serverSide.mute.MuteInfo;
 import jetbrains.buildServer.serverSide.problems.BuildProblemInfo;
 import jetbrains.buildServer.tests.TestName;
-import jetbrains.buildServer.users.NotificatorPropertyKey;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.vcs.VcsRoot;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +55,18 @@ public class BrowserNotifier implements Notificator {
 
     private final BrowserNotificationHandler notificationHandler;
 
+    private enum Icon {
+        ABORTED,
+        FAILED,
+        HANGING,
+        MUTE,
+        RESPONSIBILITY_CHANGED,
+        STARTED,
+        SUCCESSFUL,
+        UNMUTE,
+        YOU_ARE_RESPONSIBLE
+    }
+
     public BrowserNotifier(
             @NotNull NotificatorRegistry notificatorRegistry,
             @NotNull BrowserNotificationHandler notificationHandler
@@ -67,9 +78,14 @@ public class BrowserNotifier implements Notificator {
         notificatorRegistry.register(this, userProps);
     }
 
-    private MessageBean getMessage(@NotNull String status, @NotNull Build build) {
+    private String getIcon(Icon icon) {
+        return icon.toString().toLowerCase().replace('_', '-') + ".png";
+    }
+
+    private MessageBean getMessage(@NotNull String status, @NotNull Icon icon, @NotNull Build build) {
         MessageBean message = new MessageBean();
         message.title = status;
+        message.icon = getIcon(icon);
         message.body = String.format("%s [%s]", build.getFullName(), build.getBuildNumber());
         message.md5Tag();
         message.url = String.format("/viewType.html?buildTypeId=%s", build.getBuildTypeExternalId());
@@ -77,9 +93,10 @@ public class BrowserNotifier implements Notificator {
         return message;
     }
 
-    private MessageBean getMessage(@NotNull String status, @NotNull SBuildType buildType) {
+    private MessageBean getMessage(@NotNull String status, @NotNull Icon icon, @NotNull SBuildType buildType) {
         MessageBean message = new MessageBean();
         message.title = status;
+        message.icon = getIcon(icon);
         message.body = String.format("%s", buildType.getFullName());
         message.md5Tag();
         message.url = String.format("/viewType.html?buildTypeId=%s", buildType.getExternalId());
@@ -87,9 +104,10 @@ public class BrowserNotifier implements Notificator {
         return message;
     }
 
-    private MessageBean getMessage(@NotNull String status, @NotNull SProject project) {
+    private MessageBean getMessage(@NotNull String status, @NotNull Icon icon, @NotNull SProject project) {
         MessageBean message = new MessageBean();
         message.title = status;
+        message.icon = getIcon(icon);
         message.body = String.format("%s", project.getFullName());
         message.md5Tag();
         message.url = String.format("/project.html?projectId=%s", project.getExternalId());
@@ -97,9 +115,10 @@ public class BrowserNotifier implements Notificator {
         return message;
     }
 
-    private MessageBean getMessage(@NotNull String status, @NotNull MuteInfo muteInfo) {
+    private MessageBean getMessage(@NotNull String status, @NotNull Icon icon, @NotNull MuteInfo muteInfo) {
         MessageBean message = new MessageBean();
         message.title = status;
+        message.icon = getIcon(icon);
         SProject project = muteInfo.getProject();
         message.body = (null == project) ? "<unknown>" : project.getFullName();
         message.md5Tag();
@@ -122,55 +141,55 @@ public class BrowserNotifier implements Notificator {
 
     @Override
     public void notifyBuildStarted(@NotNull SRunningBuild build, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Build started", build);
+        final MessageBean message = getMessage("Build started", Icon.STARTED, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyBuildSuccessful(@NotNull SRunningBuild build, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Build successful", build);
+        final MessageBean message = getMessage("Build successful", Icon.SUCCESSFUL, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyBuildFailed(@NotNull SRunningBuild build, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Build failed", build);
+        final MessageBean message = getMessage("Build failed", Icon.FAILED, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyBuildFailedToStart(@NotNull SRunningBuild build, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Build failed to start", build);
+        final MessageBean message = getMessage("Build failed to start", Icon.ABORTED, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyLabelingFailed(@NotNull Build build, @NotNull VcsRoot root, @NotNull Throwable exception, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Labeling failed", build);
+        final MessageBean message = getMessage("Labeling failed", Icon.ABORTED, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyBuildFailing(@NotNull SRunningBuild build, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Build is failing", build);
+        final MessageBean message = getMessage("Build is failing", Icon.FAILED, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyBuildProbablyHanging(@NotNull SRunningBuild build, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Build probably hanging", build);
+        final MessageBean message = getMessage("Build probably hanging", Icon.HANGING, build);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyResponsibleChanged(@NotNull SBuildType buildType, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("Responsibility for configuration changed", buildType);
+        final MessageBean message = getMessage("Responsibility for configuration changed", Icon.RESPONSIBILITY_CHANGED, buildType);
         notificationHandler.broadcast(message, users);
     }
 
     @Override
     public void notifyResponsibleAssigned(@NotNull SBuildType buildType, @NotNull Set<SUser> users) {
-        final MessageBean message = getMessage("You were assigned as responsible for build", buildType);
+        final MessageBean message = getMessage("You were assigned as responsible for build", Icon.YOU_ARE_RESPONSIBLE, buildType);
         notificationHandler.broadcast(message, users);
     }
 
@@ -181,7 +200,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull SProject project,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage("Responsibility for test changed", project);
+        final MessageBean message = getMessage("Responsibility for test changed", Icon.RESPONSIBILITY_CHANGED, project);
         notificationHandler.broadcast(message, users);
     }
 
@@ -192,7 +211,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull SProject project,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage("You were assigned as responsible for test", project);
+        final MessageBean message = getMessage("You were assigned as responsible for test", Icon.YOU_ARE_RESPONSIBLE, project);
         notificationHandler.broadcast(message, users);
     }
 
@@ -203,7 +222,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull SProject project,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("Responsibility for %d tests changed", testNames.size()), project);
+        final MessageBean message = getMessage(String.format("Responsibility for %d tests changed", testNames.size()), Icon.RESPONSIBILITY_CHANGED, project);
         notificationHandler.broadcast(message, users);
     }
 
@@ -214,7 +233,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull SProject project,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("You were assigned as responsible for %d tests", testNames.size()), project);
+        final MessageBean message = getMessage(String.format("You were assigned as responsible for %d tests", testNames.size()), Icon.YOU_ARE_RESPONSIBLE, project);
         notificationHandler.broadcast(message, users);
     }
 
@@ -225,7 +244,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull SProject project,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("Responsibility for %d build problems is assigned", buildProblems.size()), project);
+        final MessageBean message = getMessage(String.format("Responsibility for %d build problems is assigned", buildProblems.size()), Icon.RESPONSIBILITY_CHANGED, project);
         notificationHandler.broadcast(message, users);
     }
 
@@ -236,7 +255,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull SProject project,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("Responsibility for %d build problems is changed", buildProblems.size()), project);
+        final MessageBean message = getMessage(String.format("Responsibility for %d build problems is changed", buildProblems.size()), Icon.RESPONSIBILITY_CHANGED, project);
         notificationHandler.broadcast(message, users);
     }
 
@@ -246,7 +265,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull MuteInfo muteInfo,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("%d tests are muted", tests.size()), muteInfo);
+        final MessageBean message = getMessage(String.format("%d tests are muted", tests.size()), Icon.MUTE, muteInfo);
         notificationHandler.broadcast(message, users);
     }
 
@@ -257,7 +276,7 @@ public class BrowserNotifier implements Notificator {
             @Nullable SUser user,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("%d tests are unmuted", tests.size()), muteInfo);
+        final MessageBean message = getMessage(String.format("%d tests are unmuted", tests.size()), Icon.UNMUTE, muteInfo);
         notificationHandler.broadcast(message, users);
     }
 
@@ -267,7 +286,7 @@ public class BrowserNotifier implements Notificator {
             @NotNull MuteInfo muteInfo,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("%d problems are muted", buildProblems.size()), muteInfo);
+        final MessageBean message = getMessage(String.format("%d problems are muted", buildProblems.size()), Icon.MUTE, muteInfo);
         notificationHandler.broadcast(message, users);
     }
 
@@ -278,7 +297,7 @@ public class BrowserNotifier implements Notificator {
             @Nullable SUser user,
             @NotNull Set<SUser> users
     ) {
-        final MessageBean message = getMessage(String.format("%d problems are unmuted", buildProblems.size()), muteInfo);
+        final MessageBean message = getMessage(String.format("%d problems are unmuted", buildProblems.size()), Icon.UNMUTE, muteInfo);
         notificationHandler.broadcast(message, users);
     }
 

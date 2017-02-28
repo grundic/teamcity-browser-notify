@@ -56,14 +56,16 @@
                 var notifier = window.Notify.default;
 
                 var extra = {
-                    notifyClick: function (){
-                        window.location.href = base_uri + responseObject.url;
-                    }
+                    notifyClick: function (event){
+                        event.preventDefault();
+                        window.open(base_uri + responseObject.url, '_blank');
+                    },
+                    closeOnClick: true,
+                    icon: base_uri + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/" + responseObject.icon
                 };
 
                 responseObject = $j.extend(responseObject, extra);
 
-                responseObject.icon = base_uri + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/" + responseObject.icon;
                 var notification = new notifier(
                     responseObject.title,
                     responseObject

@@ -27,52 +27,33 @@
 (function () {
     var eventListener = {
         init: function () {
-            var socket = atmosphere;
-            var transport = 'websocket';
+            var url = (window['base_uri']).replace(/^http/, "ws") + '/browserNotifier/notify.html';
+            this.socket = new WebSocket(url);
 
-            var request = {
-                url: base_uri + '/browserNotifier/notify.html',
-                contentType: 'application/json',
-                trackMessageLength: true,
-                shared: true,
-                transport: transport,
-                fallbackTransport: 'long-polling'
-            };
-
-            this.initRequest(request);
-
-            socket.subscribe(request);
+            this.socket.onmessage = this.onMessage;
         },
 
-        initRequest: function (request) {
-            request.onTransportFailure = function (errorMsg) {
-                var notifier = window.Notify.default;
-                var notification = new notifier("Transport Failure", errorMsg);
-                notification.show();
+        onMessage: function(response) {
+            var responseObject = JSON.parse(response.data);
+            var notifier = window.Notify.default;
+
+            var extra = {
+                notifyClick: function (event){
+                    event.preventDefault();
+                    window.open(base_uri + responseObject.url, '_blank');
+                },
+                closeOnClick: true,
+                icon: base_uri + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/" + responseObject.icon
             };
 
-            request.onMessage = function (response) {
-                var responseObject = JSON.parse(response.responseBody);
-                var notifier = window.Notify.default;
+            responseObject = $j.extend(responseObject, extra);
 
-                var extra = {
-                    notifyClick: function (event){
-                        event.preventDefault();
-                        window.open(base_uri + responseObject.url, '_blank');
-                    },
-                    closeOnClick: true,
-                    icon: base_uri + "/plugins/teamcity-browser-notify/com/github/grundic/browser/notificator/img/" + responseObject.icon
-                };
-
-                responseObject = $j.extend(responseObject, extra);
-
-                var notification = new notifier(
-                    responseObject.title,
-                    responseObject
-                );
-                notification.show();
-            };
-        }
+            var notification = new notifier(
+                responseObject.title,
+                responseObject
+            );
+            notification.show();
+        },
     };
 
     eventListener.init();

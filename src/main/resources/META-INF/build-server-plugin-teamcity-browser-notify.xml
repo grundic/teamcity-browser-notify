@@ -4,7 +4,16 @@
     <bean class="com.github.grundic.browser.notificator.notifier.BrowserNotifier"></bean>
     <bean class="com.github.grundic.browser.notificator.notifier.NotificatorSettingsPageExtension"></bean>
     <bean class="com.github.grundic.browser.notificator.web.ClientEventListenerProvider"></bean>
-    <bean class="com.github.grundic.browser.notificator.websocket.AtmosphereController"></bean>
-    <bean class="com.github.grundic.browser.notificator.websocket.BrowserNotificationHandler"></bean>
     <bean class="com.github.grundic.browser.notificator.MessageBean"></bean>
+    <bean class="com.github.grundic.browser.notificator.websocket.NotificationEndpoint"></bean>
+    <bean id="websocketEndpointMapper" class="com.github.grundic.browser.notificator.websocket.WebsocketEndpointMapper">
+        <constructor-arg type="java.util.Map">
+            <map key-type="java.lang.String" value-type="java.lang.Class">
+                <entry
+                        key="/browserNotifier/notify.html"
+                        value="com.github.grundic.browser.notificator.websocket.NotificationEndpoint"
+                />
+            </map>
+        </constructor-arg>
+    </bean>
 </beans>

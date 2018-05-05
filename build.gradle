@@ -13,7 +13,7 @@ apply plugin: 'java'
 apply plugin: 'com.github.rodm.teamcity-server'
 
 group = 'com.github.grundic'
-version = '1.0.3'
+version = '1.1.0'
 
 repositories {
     mavenCentral()
@@ -24,13 +24,13 @@ repositories {
 }
 
 ext {
-    teamcityVersion = System.properties['teamcity.version'] ?: '10.0.3'
+    teamcityVersion = System.properties['teamcity.version'] ?: '2017.2'
     teamcityDir = "${System.properties['user.home']}/.teamcity.d"
-    java8Home = project.hasProperty('java8.home') ? property('java8.home') : '/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home'
+    java8Home = project.hasProperty('java8.home') ? property('java8.home') : '/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home'
     serverOpts = "-DTC.res.disableAll=true " +
             "-Dteamcity.development.mode=true " +
             "-Dteamcity.development.shadowCopyClasses=true " +
-            "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=50055"
+            "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 }
 
 test {
@@ -38,8 +38,8 @@ test {
 }
 
 dependencies {
-    compile 'org.jetbrains.teamcity:server-api:10.0.2'
-    provided 'org.atmosphere:atmosphere-runtime:2.2.7'
+    compile 'org.jetbrains.teamcity:server-api:2017.2'
+    provided group: 'javax.websocket', name: 'javax.websocket-api', version: '1.1'
     provided 'com.google.code.gson:gson:2.4'
 }
 
@@ -55,6 +55,14 @@ teamcity {
         environments {
             teamcity10 {
                 version = '10.0.3'
+                downloadUrl = "https://download.jetbrains.com/teamcity/TeamCity-${version}.tar.gz"
+                homeDir = file("$teamcityDir/TeamCity-${version}")
+                dataDir = file("$teamcityDir/data/${version}")
+                javaHome = file(java8Home)
+                serverOptions = serverOpts
+            }
+            teamcity2017_2 {
+                version = '2017.2'
                 downloadUrl = "https://download.jetbrains.com/teamcity/TeamCity-${version}.tar.gz"
                 homeDir = file("$teamcityDir/TeamCity-${version}")
                 dataDir = file("$teamcityDir/data/${version}")
